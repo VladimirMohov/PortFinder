@@ -1,16 +1,23 @@
-package PortFinder
+package main
 
 import (
+	"flag"
 	"fmt"
 	"net"
-	"strconv"
 	"time"
 )
 
 const maxPort int = 65535
 const minPort int = 1
 
-func PortFinder(ipToScan string) {
+func main() {
+	var ipToScan string
+
+	flag.StringVar(&ipToScan, "value of ip", "", "IP INPUT")
+
+	if ipToScan == "" {
+		ipToScan = "127.0.0.1"
+	}
 
 	var activeThreads int = 0
 	doneChannel := make(chan bool)
@@ -28,7 +35,7 @@ func PortFinder(ipToScan string) {
 }
 
 func testTCPConn(ip string, port int, doneChannel chan bool) {
-	_, err := net.DialTimeout("tcp", ip+":"+strconv.Itoa(port), time.Second*10)
+	_, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", ip, port), time.Second*10)
 	if err == nil {
 		fmt.Printf("Host %s has open port: %d\n", ip, port)
 	}
